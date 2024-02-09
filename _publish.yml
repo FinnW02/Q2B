@@ -2,3 +2,9 @@
   netlify:
     - id: e9426e0b-265b-4234-9365-004977675a6b
       url: 'https://weberfi-blog.netlify.app'
+    - id: 3fbea7ed-188b-46f5-ba43-4e5ce3dd5821
+      url: 'https://curious-gumption-f2c4c3.netlify.app'
+    - id: 4c8792e3-76e9-440b-97f0-1998769b0916
+      url: 'https://imaginative-cat-da6262.netlify.app'
+    - id: c09587c5-8897-4ec4-85ef-fae426dacae2
+      url: 'https://golden-marzipan-5da869.netlify.app'
