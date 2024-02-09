@@ -9,7 +9,7 @@ Matrikel Nummer: 00163853
 
 Ziel dieser Projektarbeit ist es, mittels Textklassifikation Tweets zu Analysieren. Ergebnis soll eine Klassifikation sein, bei der zwischen Hatespeech und keinem Hate Speech klassifiziert wird. 
 
-![](thumbnail.jpg)
+
 
 # Datensatz und Pakete Laden 
 
@@ -439,20 +439,43 @@ results = classifier(tweets)
 Speicherung der Ergebnisse 
 
 ```{r}
-Ergebnisse <- py$results
-labels <- lapply(Ergebnisse, function(element) element$label)
-tweets_hate <- cbind(Hate_test, pred = unlist(labels))
-tweets_hate <- tweets_hate %>% 
-  mutate(class = as.factor(class),
-         pred = case_when(pred == "hate" ~ "hate speech",
-            pred == "nothate" ~ "other"),
-         pred = as.factor(pred))
+
+
+labels <- lapply(py$results, function(element) {
+  if (element$label == "hate") {
+    return("hate speech")
+  } else {
+    return("other")
+  }
+})
+
+HT3 <- Hate_test %>% 
+  select(tweet, id, class)
+
+
+
+HT3$pred <- unlist(labels)
+
+
+HT3$pred <- factor(HT3$pred, levels = c("hate speech", "other"))
+HT3$class <- factor(HT3$class, levels = c("hate speech", "other"))
+
+
+# Factorisierung
+
+HT3 <- HT3 %>% 
+  mutate(class = as.factor(class)) %>% 
+  mutate(pred = as.factor(pred))
+
+
+
+
 ```
 ## Metrics
 
 ```{r}
 my_metrics2 <- metric_set(accuracy, f_meas)
-my_metrics2(tweets_hate,
+my_metrics2(HT3,
            truth = class,
            estimate = pred)
 ```
