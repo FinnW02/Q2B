@@ -21,7 +21,7 @@ View(d_hate)
 ```
 
 
-```{r}
+```{r, echo = FALSE}
 library(tokenizers)
 library(tidyverse)
 library(tidytext)
@@ -368,7 +368,7 @@ merged_df <- merge(Predicion, Hate_test, by = "ID")
 Hate_Test2 <-
   merged_df %>%  
   mutate(class = as.factor(class))
-Hate_Test2
+
 
 my_metrics <- metric_set(accuracy, f_meas)
 my_metrics(Hate_Test2,
