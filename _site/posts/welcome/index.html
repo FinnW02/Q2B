@@ -186,7 +186,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <p>Finn Weber Matrikel Nummer: 00163853</p>
-<p>Ziel dieser Projektarbeit ist es, mittels Textklassifikation Tweets zu Analysieren. Ergebnis soll eine Klassifikation sein, bei der zwischen Hatespeech und keinem Hate Speech klassifiziert wird.</p>
+<p>Ziel dieser Projektarbeit ist es, mittels Textklassifikation Tweets zu analysieren. Ergebnis soll eine Klassifikation sein, bei der zwischen Hatespeech und keinem Hate Speech klassifiziert wird.</p>
 <section id="datensatz-und-pakete-laden" class="level1">
 <h1>Datensatz und Pakete Laden</h1>
 <div class="cell">
@@ -274,7 +274,7 @@ dbl (1): id
 </div>
 <section id="entfernung-stopwords" class="level3">
 <h3 class="anchored" data-anchor-id="entfernung-stopwords">Entfernung Stopwords</h3>
-<p>Als nächstes Entferne ich Stopwords, da auch die keinen Mehrwert besitzen bei der Klassifikation</p>
+<p>Als nächstes entferne ich Stopwords, da auch die keinen Mehrwert besitzen bei der Klassifikation</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidytext)</span>
@@ -307,8 +307,8 @@ dbl (1): id
 </div>
 </section>
 </section>
-<section id="sentimentannalyse" class="level2">
-<h2 class="anchored" data-anchor-id="sentimentannalyse">Sentimentannalyse</h2>
+<section id="sentimentanalyse" class="level2">
+<h2 class="anchored" data-anchor-id="sentimentanalyse">Sentimentanalyse</h2>
 <p>Jetzt beginne ich mit der Sentimentanalyse, um mir einen weiteren Überblick über die Daten zu verschaffen. Dafür benutze ich 3 Sentimentwörterbücher, die ich dann kombiniere.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidytext)</span>
@@ -566,7 +566,7 @@ dbl (1): id
 <pre><code>i 1 of 2 resampling: Rec1_NavB</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code>✔ 1 of 2 resampling: Rec1_NavB (12.6s)</code></pre>
+<pre><code>✔ 1 of 2 resampling: Rec1_NavB (13.1s)</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>i 2 of 2 tuning:     Rec1_XgB</code></pre>
@@ -575,12 +575,12 @@ dbl (1): id
 <pre><code>i Creating pre-processing data to finalize unknown parameter: mtry</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code>✔ 2 of 2 tuning:     Rec1_XgB (5m 51.3s)</code></pre>
+<pre><code>✔ 2 of 2 tuning:     Rec1_XgB (6m 3.6s)</code></pre>
 </div>
 </div>
 </section>
-<section id="performanz" class="level2">
-<h2 class="anchored" data-anchor-id="performanz">Performanz</h2>
+<section id="performance" class="level2">
+<h2 class="anchored" data-anchor-id="performance">Performance</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">collect_metrics</span>(model_set) <span class="sc">%&gt;%</span> </span>
 <span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(.metric <span class="sc">==</span> <span class="st">"roc_auc"</span>) <span class="sc">%&gt;%</span> </span>
@@ -604,7 +604,7 @@ dbl (1): id
 </div>
 </div>
 </div>
-<p>Die Modelle schneiden beiede eigentlich gut ab. Klar erkennbar ist aber, dass die XgBoost Modelle besser performen als die naive_bayes. Im nächsten Schritt suche ich daher das beste Modell raus.</p>
+<p>Die Modelle schneiden beide eigentlich gut ab. Klar erkennbar ist aber, dass die XgBoost Modelle besser performen als die naive_bayes. Im nächsten Schritt suche ich daher das beste Modell raus.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>model_set <span class="sc">%&gt;%</span> </span>
 <span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect_metrics</span>() <span class="sc">%&gt;%</span> </span>
@@ -654,7 +654,7 @@ dbl (1): id
 <span id="cb58-8"><a href="#cb58-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb58-9"><a href="#cb58-9" aria-hidden="true" tabindex="-1"></a>fit_final <span class="ot">&lt;-</span> <span class="fu">fit</span>(best_wf_finalized, <span class="at">data =</span> Hate_train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[20:17:27] WARNING: src/learner.cc:767: 
+<pre><code>[21:13:01] WARNING: src/learner.cc:767: 
 Parameters: { "nthreads" } are not used.</code></pre>
 </div>
 </div>
@@ -680,8 +680,8 @@ Parameters: { "nthreads" } are not used.</code></pre>
 </div>
 <p>Die Fläche unterhalb der Kurve ist durchaus beachtlich und unterstützt die These, dass das Modell gut abschneidet.</p>
 </section>
-<section id="varibale-importance" class="level2">
-<h2 class="anchored" data-anchor-id="varibale-importance">Varibale Importance</h2>
+<section id="variable-importance" class="level2">
+<h2 class="anchored" data-anchor-id="variable-importance">Variable Importance</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a>fit_final <span class="sc">%&gt;%</span> </span>
 <span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">extract_fit_parsnip</span>() <span class="sc">%&gt;%</span> </span>
@@ -776,7 +776,7 @@ Parameters: { "nthreads" } are not used.</code></pre>
 <span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> classifier(tweets)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Speicherung der Ergebnisse</p>
-<p>hierfür nehme ich die Python Prediction und füge sie mit dem test Datensatz zusammen, um diese dann mit den originalen Werten zu vergleichen.</p>
+<p>hierfür nehme ich die Python Prediction und füge sie mit dem Testdatensatz zusammen, um diese dann mit den originalen Werten zu vergleichen.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a>labels <span class="ot">&lt;-</span> <span class="fu">lapply</span>(py<span class="sc">$</span>results, <span class="cf">function</span>(element) {</span>
 <span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (element<span class="sc">$</span>label <span class="sc">==</span> <span class="st">"hate"</span>) {</span>
@@ -820,7 +820,7 @@ Parameters: { "nthreads" } are not used.</code></pre>
 2 f_meas   binary         0.788</code></pre>
 </div>
 </div>
-<p>Zusammenfassend kann man also sagen, dass das XgBoost Modell auf diesen Daten immer noch besser performt, als das Roberta Modell. Beide performen jedoch sehr gut und haben ihre eigenen Vorteile. Das Roberta Modell läuft bei mir z.B. weitaus schneller durch. Auch das Naive Bayes Modell passt solide zu dem Datensatz, performt aber allgemein schlechter. Die Aufarbeitung der Daten im ersten Schritt (entfernung der https etc) und die tfidf Implementierung haben hier bei der Analyse den größten Unterschied gemacht und für gute Ergebnisse gesorgt.</p>
+<p>Zusammenfassend kann man also sagen, dass das XgBoost Modell auf diesen Daten immer noch besser performt, als das Roberta Modell. Beide performen jedoch sehr gut und haben ihre eigenen Vorteile. Das Roberta Modell läuft bei mir z.B. weitaus schneller durch. Auch das Naive Bayes Modell passt solide zu dem Datensatz, performt aber allgemein schlechter. Die Aufarbeitung der Daten im ersten Schritt (Entfernung der https etc) und die tfidf Implementierung haben hier bei der Analyse den größten Unterschied gemacht und für gute Ergebnisse gesorgt.</p>
 
 
 </section>

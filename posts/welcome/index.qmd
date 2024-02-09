@@ -7,7 +7,7 @@ date: "2024-02-06"
 Finn Weber
 Matrikel Nummer: 00163853
 
-Ziel dieser Projektarbeit ist es, mittels Textklassifikation Tweets zu Analysieren. Ergebnis soll eine Klassifikation sein, bei der zwischen Hatespeech und keinem Hate Speech klassifiziert wird. 
+Ziel dieser Projektarbeit ist es, mittels Textklassifikation Tweets zu analysieren. Ergebnis soll eine Klassifikation sein, bei der zwischen Hatespeech und keinem Hate Speech klassifiziert wird. 
 
 
 
@@ -85,7 +85,7 @@ length(unique(d_hate_token$id))
 
 ### Entfernung Stopwords 
 
-Als nächstes Entferne ich Stopwords, da auch die keinen Mehrwert besitzen bei der Klassifikation 
+Als nächstes entferne ich Stopwords, da auch die keinen Mehrwert besitzen bei der Klassifikation 
 
 ```{r}
 library(dplyr)
@@ -103,7 +103,7 @@ print(d_hate_clean)
 
 
 
-## Sentimentannalyse 
+## Sentimentanalyse 
 
 Jetzt beginne ich mit der Sentimentanalyse, um mir einen weiteren Überblick über die Daten zu verschaffen. Dafür benutze ich 3 Sentimentwörterbücher, die ich dann kombiniere.
 
@@ -263,7 +263,7 @@ workflow_map(
 
 ```
 
-## Performanz 
+## Performance 
 
 ```{r}
 collect_metrics(model_set) %>% 
@@ -276,7 +276,7 @@ autoplot(model_set)
 ```
 
 
-Die Modelle schneiden beiede eigentlich gut ab. Klar erkennbar ist aber, dass die XgBoost Modelle besser performen als die naive_bayes. Im nächsten Schritt suche ich daher das beste Modell raus. 
+Die Modelle schneiden beide eigentlich gut ab. Klar erkennbar ist aber, dass die XgBoost Modelle besser performen als die naive_bayes. Im nächsten Schritt suche ich daher das beste Modell raus. 
 
 
 
@@ -333,7 +333,7 @@ wf_preds %>%
 
 Die Fläche unterhalb der Kurve ist durchaus beachtlich und unterstützt die These, dass das Modell gut abschneidet.
 
-## Varibale Importance 
+## Variable Importance 
 
 ```{r}
 fit_final %>% 
@@ -436,7 +436,7 @@ results = classifier(tweets)
 
 Speicherung der Ergebnisse 
 
-hierfür nehme ich die Python Prediction und füge sie mit dem test Datensatz zusammen, um diese dann mit den originalen Werten zu vergleichen.
+hierfür nehme ich die Python Prediction und füge sie mit dem Testdatensatz zusammen, um diese dann mit den originalen Werten zu vergleichen.
 ```{r}
 
 
@@ -480,4 +480,4 @@ my_metrics2(HT3,
 ```
 
 
-Zusammenfassend kann man also sagen, dass das XgBoost Modell auf diesen Daten immer noch besser performt, als das Roberta Modell. Beide performen jedoch sehr gut und haben ihre eigenen Vorteile. Das Roberta Modell läuft bei mir z.B. weitaus schneller durch. Auch das Naive Bayes Modell passt solide zu dem Datensatz, performt aber allgemein schlechter. Die Aufarbeitung der Daten im ersten Schritt (entfernung der https etc) und die tfidf Implementierung haben hier bei der Analyse den größten Unterschied gemacht und für gute Ergebnisse gesorgt.
+Zusammenfassend kann man also sagen, dass das XgBoost Modell auf diesen Daten immer noch besser performt, als das Roberta Modell. Beide performen jedoch sehr gut und haben ihre eigenen Vorteile. Das Roberta Modell läuft bei mir z.B. weitaus schneller durch. Auch das Naive Bayes Modell passt solide zu dem Datensatz, performt aber allgemein schlechter. Die Aufarbeitung der Daten im ersten Schritt (Entfernung der https etc) und die tfidf Implementierung haben hier bei der Analyse den größten Unterschied gemacht und für gute Ergebnisse gesorgt.
