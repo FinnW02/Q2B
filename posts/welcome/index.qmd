@@ -1,12 +1,459 @@
 ---
-title: "Welcome To My Blog"
-author: "Tristan O'Malley"
+title: "DS2 Finn Weber"
+author: "Finn Weber"
 date: "2024-02-06"
-categories: [news]
 ---
 
-This is the first post in a Quarto blog. Welcome!
+Finn Weber
+Matrikel Nummer: 00163853
+
+Ziel dieser Projektarbeit ist es, mittels Textklassifikation Tweets zu Analysieren. Ergebnis soll eine Klassifikation sein, bei der zwischen Hatespeech und keinem Hate Speech klassifiziert wird. 
 
 ![](thumbnail.jpg)
 
-Since this post doesn't specify an explicit `image`, the first image in the post will be used in the listing page of posts.
+# Datensatz und Pakete Laden 
+
+
+```{r}
+library(readr)
+d_hate <- read_csv("C:/Users/finnw/Downloads/d_hate.csv")
+View(d_hate)
+```
+
+
+```{r}
+library(tokenizers)
+library(tidyverse)
+library(tidytext)
+library(textdata)
+library(ggthemes)
+library(topicmodels)
+library(tm)
+library(tidymodels)
+library(stringr)
+library(httr)
+library(textrecipes)
+library(sentimentr)
+library(syuzhet)
+library(vip)
+library(tensorflow)
+library(keras)
+library(caret)
+library(yardstick)
+library(discrim)
+```
+
+
+# EDA 
+
+
+Im ersten Schritt entferne ich Patterns aus den Tweets, die für die Analyse keinen Wert haben. Anhand der vorhandenen Links kann man m.M.n definitiv nicht vorhersagen, ob es sich um Hatespeech handelt. 
+
+
+```{r}
+d_hate_2 <- d_hate %>%
+  mutate(tweet = str_remove_all(tweet, pattern = 'RT\\s*|http[s]?://\\S+|\\d+')) %>% 
+  mutate(tweet = str_remove_all(tweet, pattern = '\\bhttp\\b|\\bt.co\\b')) 
+```
+
+Im nächsten Schritt erstelle ich Train und Test Daten, für die spätere Modellierung.
+
+
+```{r}
+set.seed(42)
+train_test_split <- initial_split(d_hate_2, prop = .7, strata = class)
+Hate_train <- training(train_test_split)
+Hate_test <- testing(train_test_split)
+```
+
+
+## Tokenisierung
+
+Jetzt beginne ich mit der Tokenisierung 
+
+```{r}
+d_hate_token <- d_hate_2 %>%
+  unnest_tokens(word, tweet)
+
+print(d_hate_token)
+```
+
+```{r}
+length(unique(d_hate_token$id))
+```
+
+
+### Entfernung Stopwords 
+
+Als nächstes Entferne ich Stopwords, da auch die keinen Mehrwert besitzen bei der Klassifikation 
+
+```{r}
+library(dplyr)
+library(tidytext)
+
+# Laden der englischen Stopwörter mit tidytext
+stopwords_en <- data.frame(word = stop_words$word)
+
+# Anwendung des anti_join() auf die d_hate_token Daten
+d_hate_clean <- d_hate_token %>%
+  anti_join(stopwords_en)
+
+# Ergebnisse anzeigen oder weiterverarbeiten
+print(d_hate_clean)
+
+```
+
+
+
+## Sentimentannalyse 
+
+Jetzt beginne ich mit der Sentimentanalyse, um mir einen weiteren Überblick über die Daten zu verschaffen. Dafür benutze ich 3 Sentimentwörterbücher, die ich dann kombiniere.
+
+```{r}
+library(tidytext)
+
+get_sentiments("afinn")
+get_sentiments("bing")
+get_sentiments("nrc")
+```
+
+
+```{r}
+sent_afinn <- get_sentiments("afinn")
+sent_bing <- get_sentiments("bing")
+sent_nrc <- get_sentiments("nrc")
+
+
+# Liste gemeinsamer Wörter
+common_words <- Reduce(intersect, list(sent_afinn$word, sent_nrc$word, sent_bing$word))
+
+# Erstelle leeren Rahmen
+combined_analysis <- data.frame(word = common_words)
+
+# Füge die Analyse für AFINN hinzu
+combined_analysis <- left_join(combined_analysis, sent_afinn, by = "word") %>%
+  mutate(neg_pos_afinn = if_else(value > 0, "pos", "neg"))
+
+# Füge die Analyse für NRC hinzu
+combined_analysis <- left_join(combined_analysis, sent_nrc, by = "word") %>%
+  mutate(neg_pos_nrc = if_else(sentiment == "positive", "pos", "neg"))
+
+# Füge die Analyse für BING hinzu
+combined_analysis <- left_join(combined_analysis, sent_bing, by = "word") %>%
+  mutate(neg_pos_bing = if_else(value > 0, "pos", "neg"))
+
+# Entferne unnötige Spalten
+combined_analysis <- combined_analysis[, -c(3:5)]
+
+
+nrow(combined_analysis)
+
+
+
+
+
+d_hatetoken_SA <- d_hate_clean %>%
+inner_join(combined_analysis)
+
+nrow(d_hatetoken_SA)
+
+length(unique(d_hatetoken_SA$id))
+
+d_hatetoken_SA
+
+```
+
+Sentimentwerte geplottet  
+
+```{r}
+d_hatetoken_SA %>% 
+  ggplot(aes(value)) + 
+  geom_histogram() +
+  labs(x = "Sentimentswert",
+       y = "Anzahl") +
+  theme_minimal()
+```
+
+
+```{r}
+d_hatetoken_SA %>%
+  count(word, neg_pos_bing, sort = TRUE) %>%
+  ungroup() %>%
+  group_by(neg_pos_bing) %>%
+  slice_max(n, n = 12)%>%
+  ungroup() %>%
+  mutate(word = reorder(word, n)) %>%
+  ggplot(aes(n, word, fill = neg_pos_bing)) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~neg_pos_bing, scales = "free_y") 
+
+```
+
+# Modellierung - Tidymodels
+
+
+## Recipe Erstellung
+
+```{r}
+Rec1 <- 
+  recipe(class ~ ., data = Hate_train) %>%
+  update_role(id, new_role = "id") %>% 
+  step_text_normalization(tweet) %>%
+  step_mutate(senti = get_sentiment(tweet)) %>% 
+  step_tokenize(tweet, token = "words") %>%
+  step_stopwords(tweet, language = "en", stopword_source = "snowball") %>% 
+  step_stem(tweet) %>%
+  step_tokenfilter(tweet, max_tokens = 1e2) %>%
+  step_tfidf(tweet) 
+
+```
+
+## preppen und backen
+
+
+```{r}
+rec1_prepped <- prep(Rec1)
+
+d_rec1 <- bake(rec1_prepped, new_data = NULL)
+
+head(d_rec1)
+```
+
+Entschieden habe ich mich für ein NaiveBayes und ein XgBoost Modell. 
+
+```{r}
+
+NaiveBayes <- naive_Bayes() %>% 
+  set_mode("classification") %>%
+  set_engine("naivebayes")
+
+
+XgBoost <- 
+  boost_tree(
+  mtry = tune(), 
+  trees = 1000, 
+  tree_depth = tune(), 
+  min_n = tune(), 
+  ) %>%
+  set_engine("xgboost", nthreads = parallel::detectCores()) %>%
+  set_mode("classification") 
+```
+
+## Workflowset
+
+```{r}
+preproc <- list(Rec1 = Rec1)
+models <- list(NavB = NaiveBayes, XgB = XgBoost)
+ 
+ 
+all_workflows <- workflow_set(preproc, models)
+```
+
+
+
+```{r}
+
+model_set <-
+all_workflows %>%
+workflow_map(
+  resamples = vfold_cv(Hate_train,
+  strata = class),
+  grid = 7,
+  seed = 42,
+  verbose = TRUE, 
+  control = control_resamples(save_pred = TRUE))
+
+```
+
+## Performanz 
+
+```{r}
+collect_metrics(model_set) %>% 
+  filter(.metric == "roc_auc") %>% 
+  slice_max(mean, n = 3)
+```
+
+```{r}
+autoplot(model_set)
+```
+
+
+Die Modelle schneiden beiede eigentlich gut ab. Klar erkennbar ist aber, dass die XgBoost Modelle besser performen als die naive_bayes. Im nächsten Schritt suche ich daher das beste Modell raus. 
+
+
+
+```{r}
+model_set %>% 
+  collect_metrics() %>% 
+  arrange(-mean) %>% 
+  head(10)
+
+
+best_model_params <-
+extract_workflow_set_result(model_set, "Rec1_XgB") %>% 
+  select_best()
+
+best_model_params
+
+```
+
+Das Rec1_XgB Modell schneidet hier am besten ab und wird daher im weiteren Verlauf von mir verwendet.
+
+
+## Finalisieren
+
+
+```{r}
+Nr1_wf <- 
+all_workflows %>% 
+  extract_workflow("Rec1_XgB")
+
+best_wf_finalized <- 
+  Nr1_wf %>% 
+  finalize_workflow(best_model_params)
+
+fit_final <- fit(best_wf_finalized, data = Hate_train)
+```
+
+
+Die Ergebnisse schaue ich mir nochmal genauer an, um spätere Prognosen damit zu vergleichen.
+
+
+
+## ROC-Auc Kurve
+
+```{r}
+wf_preds <-
+  collect_predictions(model_set)
+
+wf_preds %>%
+  group_by(wflow_id) %>% 
+  roc_curve(truth = class, `.pred_hate speech`) %>% 
+  autoplot()
+
+```
+
+
+
+## Varibale Importance 
+
+```{r}
+fit_final %>% 
+  extract_fit_parsnip() %>% 
+  vip()
+```
+
+Das Hinzufügen des tfdif steps im recipe scheint sich Eindeutig gelohnt zu haben.
+
+
+## Predicten
+
+Das Modell nutze ich nun zum Predicten von Werten
+
+```{r}
+HT2 <- Hate_test %>% 
+  select(-class)
+
+
+Predicion <- predict(fit_final, HT2)
+
+Predicion <- as.data.frame(Predicion)
+
+
+Predicion$ID <- 1:nrow(Predicion)
+Hate_test$ID <- 1:nrow(Hate_test)
+merged_df <- merge(Predicion, Hate_test, by = "ID")
+
+
+Hate_Test2 <-
+  merged_df %>%  
+  mutate(class = as.factor(class))
+Hate_Test2
+
+my_metrics <- metric_set(accuracy, f_meas)
+my_metrics(Hate_Test2,
+           truth = class,
+           estimate = .pred_class)
+```
+
+Die Metrics hierbei sind wirklich sehr gut. Das XgBoost Modell schneidet hierbei sehr gut ab. 
+
+# Klassifikation mit dem Facebook Roberta Modell
+
+Zur Benutzung des Facebook Roberta Modells benötige ich eine Python venv, welche ich außerhalb des R Projekts in Python erstellt habe. Hierbei benutze ich den Befehl pipeline aus der transformers Library, um das Modell zu importieren und zum Predicten zu nutzen.
+
+
+## Nutzung des Venv 
+
+```{r}
+library(reticulate)
+
+use_virtualenv("C:\\Users\\finnw\\Desktop\\Env\\myenv")
+
+
+```
+
+Hier installiere ich die nötigen Python Libraries 
+
+
+```{bash}
+#pip install pandas
+#pip install tensorflow
+#pip install torch
+#pip install transformers
+
+```
+
+Hier nutze ich die pipeline, um das Modell zu importieren
+
+```{python}
+
+import pandas as pd
+import tensorflow as tf
+
+
+
+from transformers import pipeline
+
+
+classifier = pipeline("text-classification", model="facebook/roberta-hate-speech-dynabench-r4-target")
+
+
+```
+
+Bereitstellung der Tweets für python
+
+
+```{r}
+Tweets <- Hate_test$tweet
+
+```
+
+Hier lasse ich das Modell laufen
+
+```{python}
+tweets = r.Tweets
+results = classifier(tweets)
+```
+
+Speicherung der Ergebnisse 
+
+```{r}
+Ergebnisse <- py$results
+labels <- lapply(Ergebnisse, function(element) element$label)
+tweets_hate <- cbind(Hate_test, pred = unlist(labels))
+tweets_hate <- tweets_hate %>% 
+  mutate(class = as.factor(class),
+         pred = case_when(pred == "hate" ~ "hate speech",
+            pred == "nothate" ~ "other"),
+         pred = as.factor(pred))
+```
+## Metrics
+
+```{r}
+my_metrics2 <- metric_set(accuracy, f_meas)
+my_metrics2(tweets_hate,
+           truth = class,
+           estimate = pred)
+```
+Zusammenfassend kann man also sagen, dass das XgBoost Modell auf diesen Daten immer noch besser performt, als das Roberta Modell. Beide performen jedoch sehr gut und haben ihre eigenen Vorteile. Das Roberta Modell läuft bei mir z.B. weitaus schneller durch.
