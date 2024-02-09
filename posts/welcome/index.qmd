@@ -21,7 +21,7 @@ View(d_hate)
 ```
 
 
-```{r, echo = FALSE}
+```{r, output = FALSE}
 library(tokenizers)
 library(tidyverse)
 library(tidytext)
@@ -91,14 +91,12 @@ Als nächstes Entferne ich Stopwords, da auch die keinen Mehrwert besitzen bei d
 library(dplyr)
 library(tidytext)
 
-# Laden der englischen Stopwörter mit tidytext
 stopwords_en <- data.frame(word = stop_words$word)
 
-# Anwendung des anti_join() auf die d_hate_token Daten
+
 d_hate_clean <- d_hate_token %>%
   anti_join(stopwords_en)
 
-# Ergebnisse anzeigen oder weiterverarbeiten
 print(d_hate_clean)
 
 ```
@@ -117,6 +115,7 @@ get_sentiments("bing")
 get_sentiments("nrc")
 ```
 
+Hier kombiniere ich die 3 Sentimentbücher unter combined_analysis.
 
 ```{r}
 sent_afinn <- get_sentiments("afinn")
@@ -124,25 +123,20 @@ sent_bing <- get_sentiments("bing")
 sent_nrc <- get_sentiments("nrc")
 
 
-# Liste gemeinsamer Wörter
 common_words <- Reduce(intersect, list(sent_afinn$word, sent_nrc$word, sent_bing$word))
 
-# Erstelle leeren Rahmen
 combined_analysis <- data.frame(word = common_words)
 
-# Füge die Analyse für AFINN hinzu
 combined_analysis <- left_join(combined_analysis, sent_afinn, by = "word") %>%
   mutate(neg_pos_afinn = if_else(value > 0, "pos", "neg"))
 
-# Füge die Analyse für NRC hinzu
 combined_analysis <- left_join(combined_analysis, sent_nrc, by = "word") %>%
   mutate(neg_pos_nrc = if_else(sentiment == "positive", "pos", "neg"))
 
-# Füge die Analyse für BING hinzu
 combined_analysis <- left_join(combined_analysis, sent_bing, by = "word") %>%
   mutate(neg_pos_bing = if_else(value > 0, "pos", "neg"))
 
-# Entferne unnötige Spalten
+
 combined_analysis <- combined_analysis[, -c(3:5)]
 
 
