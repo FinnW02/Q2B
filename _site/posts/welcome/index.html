@@ -205,131 +205,25 @@ dbl (1): id
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">View</span>(d_hate)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="cell-output cell-output-stderr">
-<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
-✔ dplyr     1.1.4     ✔ purrr     1.0.2
-✔ forcats   1.0.0     ✔ stringr   1.5.1
-✔ ggplot2   3.4.4     ✔ tibble    3.2.1
-✔ lubridate 1.9.3     ✔ tidyr     1.3.1
-── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
-✖ dplyr::filter() masks stats::filter()
-✖ dplyr::lag()    masks stats::lag()
-ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors
-Lade nötiges Paket: NLP
-
-
-Attache Paket: 'NLP'
-
-
-Das folgende Objekt ist maskiert 'package:ggplot2':
-
-    annotate
-
-
-── Attaching packages ────────────────────────────────────── tidymodels 1.1.1 ──
-
-✔ broom        1.0.5     ✔ rsample      1.2.0
-✔ dials        1.2.0     ✔ tune         1.1.2
-✔ infer        1.0.6     ✔ workflows    1.1.3
-✔ modeldata    1.3.0     ✔ workflowsets 1.0.1
-✔ parsnip      1.1.1     ✔ yardstick    1.3.0
-✔ recipes      1.0.9     
-
-── Conflicts ───────────────────────────────────────── tidymodels_conflicts() ──
-✖ NLP::annotate()   masks ggplot2::annotate()
-✖ scales::discard() masks purrr::discard()
-✖ dplyr::filter()   masks stats::filter()
-✖ recipes::fixed()  masks stringr::fixed()
-✖ dplyr::lag()      masks stats::lag()
-✖ yardstick::spec() masks readr::spec()
-✖ recipes::step()   masks stats::step()
-• Learn how to get started at https://www.tidymodels.org/start/
-
-
-Attache Paket: 'httr'
-
-
-Das folgende Objekt ist maskiert 'package:NLP':
-
-    content
-
-
-Das folgende Objekt ist maskiert 'package:textdata':
-
-    cache_info
-
-
-
-Attache Paket: 'syuzhet'
-
-
-Das folgende Objekt ist maskiert 'package:sentimentr':
-
-    get_sentences
-
-
-Das folgende Objekt ist maskiert 'package:scales':
-
-    rescale
-
-
-
-Attache Paket: 'vip'
-
-
-Das folgende Objekt ist maskiert 'package:utils':
-
-    vi
-
-
-
-Attache Paket: 'keras'
-
-
-Das folgende Objekt ist maskiert 'package:yardstick':
-
-    get_weights
-
-
-Das folgende Objekt ist maskiert 'package:textdata':
-
-    dataset_imdb
-
-
-Lade nötiges Paket: lattice
-
-
-Attache Paket: 'caret'
-
-
-Das folgende Objekt ist maskiert 'package:tensorflow':
-
-    train
-
-
-Das folgende Objekt ist maskiert 'package:httr':
-
-    progress
-
-
-Die folgenden Objekte sind maskiert von 'package:yardstick':
-
-    precision, recall, sensitivity, specificity
-
-
-Das folgende Objekt ist maskiert 'package:purrr':
-
-    lift
-
-
-
-Attache Paket: 'discrim'
-
-
-Das folgende Objekt ist maskiert 'package:dials':
-
-    smoothness</code></pre>
-</div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tokenizers)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidytext)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(textdata)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggthemes)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(topicmodels)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tm)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidymodels)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringr)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(httr)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(textrecipes)</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sentimentr)</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(syuzhet)</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(vip)</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tensorflow)</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(keras)</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(caret)</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(yardstick)</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(discrim)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="eda" class="level1">
@@ -385,17 +279,15 @@ Das folgende Objekt ist maskiert 'package:dials':
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidytext)</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Laden der englischen Stopwörter mit tidytext</span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>stopwords_en <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">word =</span> stop_words<span class="sc">$</span>word)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>stopwords_en <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">word =</span> stop_words<span class="sc">$</span>word)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Anwendung des anti_join() auf die d_hate_token Daten</span></span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>d_hate_clean <span class="ot">&lt;-</span> d_hate_token <span class="sc">%&gt;%</span></span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">anti_join</span>(stopwords_en)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>d_hate_clean <span class="ot">&lt;-</span> d_hate_token <span class="sc">%&gt;%</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">anti_join</span>(stopwords_en)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Joining with `by = join_by(word)`</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Ergebnisse anzeigen oder weiterverarbeiten</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(d_hate_clean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(d_hate_clean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 40,418 × 3
       id class word        
@@ -473,29 +365,25 @@ Das folgende Objekt ist maskiert 'package:dials':
 # ℹ 13,862 more rows</code></pre>
 </div>
 </div>
+<p>Hier kombiniere ich die 3 Sentimentbücher unter combined_analysis.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>sent_afinn <span class="ot">&lt;-</span> <span class="fu">get_sentiments</span>(<span class="st">"afinn"</span>)</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>sent_bing <span class="ot">&lt;-</span> <span class="fu">get_sentiments</span>(<span class="st">"bing"</span>)</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>sent_nrc <span class="ot">&lt;-</span> <span class="fu">get_sentiments</span>(<span class="st">"nrc"</span>)</span>
 <span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Liste gemeinsamer Wörter</span></span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>common_words <span class="ot">&lt;-</span> <span class="fu">Reduce</span>(intersect, <span class="fu">list</span>(sent_afinn<span class="sc">$</span>word, sent_nrc<span class="sc">$</span>word, sent_bing<span class="sc">$</span>word))</span>
-<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Erstelle leeren Rahmen</span></span>
-<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>combined_analysis <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">word =</span> common_words)</span>
-<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Füge die Analyse für AFINN hinzu</span></span>
-<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>combined_analysis <span class="ot">&lt;-</span> <span class="fu">left_join</span>(combined_analysis, sent_afinn, <span class="at">by =</span> <span class="st">"word"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">neg_pos_afinn =</span> <span class="fu">if_else</span>(value <span class="sc">&gt;</span> <span class="dv">0</span>, <span class="st">"pos"</span>, <span class="st">"neg"</span>))</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>common_words <span class="ot">&lt;-</span> <span class="fu">Reduce</span>(intersect, <span class="fu">list</span>(sent_afinn<span class="sc">$</span>word, sent_nrc<span class="sc">$</span>word, sent_bing<span class="sc">$</span>word))</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>combined_analysis <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">word =</span> common_words)</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>combined_analysis <span class="ot">&lt;-</span> <span class="fu">left_join</span>(combined_analysis, sent_afinn, <span class="at">by =</span> <span class="st">"word"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">neg_pos_afinn =</span> <span class="fu">if_else</span>(value <span class="sc">&gt;</span> <span class="dv">0</span>, <span class="st">"pos"</span>, <span class="st">"neg"</span>))</span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>combined_analysis <span class="ot">&lt;-</span> <span class="fu">left_join</span>(combined_analysis, sent_nrc, <span class="at">by =</span> <span class="st">"word"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">neg_pos_nrc =</span> <span class="fu">if_else</span>(sentiment <span class="sc">==</span> <span class="st">"positive"</span>, <span class="st">"pos"</span>, <span class="st">"neg"</span>))</span>
 <span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Füge die Analyse für NRC hinzu</span></span>
-<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>combined_analysis <span class="ot">&lt;-</span> <span class="fu">left_join</span>(combined_analysis, sent_nrc, <span class="at">by =</span> <span class="st">"word"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">neg_pos_nrc =</span> <span class="fu">if_else</span>(sentiment <span class="sc">==</span> <span class="st">"positive"</span>, <span class="st">"pos"</span>, <span class="st">"neg"</span>))</span>
-<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Füge die Analyse für BING hinzu</span></span>
-<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a>combined_analysis <span class="ot">&lt;-</span> <span class="fu">left_join</span>(combined_analysis, sent_bing, <span class="at">by =</span> <span class="st">"word"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">neg_pos_bing =</span> <span class="fu">if_else</span>(value <span class="sc">&gt;</span> <span class="dv">0</span>, <span class="st">"pos"</span>, <span class="st">"neg"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>combined_analysis <span class="ot">&lt;-</span> <span class="fu">left_join</span>(combined_analysis, sent_bing, <span class="at">by =</span> <span class="st">"word"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">neg_pos_bing =</span> <span class="fu">if_else</span>(value <span class="sc">&gt;</span> <span class="dv">0</span>, <span class="st">"pos"</span>, <span class="st">"neg"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning in left_join(combined_analysis, sent_bing, by = "word"): Detected an unexpected many-to-many relationship between `x` and `y`.
 ℹ Row 730 of `x` matches multiple rows in `y`.
@@ -503,11 +391,10 @@ Das folgende Objekt ist maskiert 'package:dials':
 ℹ If a many-to-many relationship is expected, set `relationship =
   "many-to-many"` to silence this warning.</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Entferne unnötige Spalten</span></span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>combined_analysis <span class="ot">&lt;-</span> combined_analysis[, <span class="sc">-</span><span class="fu">c</span>(<span class="dv">3</span><span class="sc">:</span><span class="dv">5</span>)]</span>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>combined_analysis <span class="ot">&lt;-</span> combined_analysis[, <span class="sc">-</span><span class="fu">c</span>(<span class="dv">3</span><span class="sc">:</span><span class="dv">5</span>)]</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(combined_analysis)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(combined_analysis)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 2154</code></pre>
 </div>
@@ -593,6 +480,7 @@ Das folgende Objekt ist maskiert 'package:dials':
 <h1>Modellierung - Tidymodels</h1>
 <section id="recipe-erstellung" class="level2">
 <h2 class="anchored" data-anchor-id="recipe-erstellung">Recipe Erstellung</h2>
+<p>Im ersten Schritt erstelle ich mein Recept für die Modelle. Hierbei nutze ich step_stopwords, um Stopwörter zu entfernen, step_stem, um Wortstämme zu analysieren, step_tfidf zur tfidf implementierung und step_text_normalization zur weiteren Textbereinigung.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>Rec1 <span class="ot">&lt;-</span> </span>
 <span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">recipe</span>(class <span class="sc">~</span> ., <span class="at">data =</span> Hate_train) <span class="sc">%&gt;%</span></span>
@@ -633,7 +521,7 @@ Das folgende Objekt ist maskiert 'package:dials':
 #   tfidf_tweet_even &lt;dbl&gt;, tfidf_tweet_ever &lt;dbl&gt;, tfidf_tweet_everi &lt;dbl&gt;, …</code></pre>
 </div>
 </div>
-<p>Entschieden habe ich mich für ein NaiveBayes und ein XgBoost Modell.</p>
+<p>Entschieden habe ich mich für ein NaiveBayes und ein XgBoost Modell. Beide definiere ich hier. Beim XgBoost Modell tune ich Parameter im folgenden. Trees habe ich auf 1000 gesetzt, um overfitting zu verhindern.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>NaiveBayes <span class="ot">&lt;-</span> <span class="fu">naive_Bayes</span>() <span class="sc">%&gt;%</span> </span>
 <span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"classification"</span>) <span class="sc">%&gt;%</span></span>
@@ -653,6 +541,7 @@ Das folgende Objekt ist maskiert 'package:dials':
 </section>
 <section id="workflowset" class="level2">
 <h2 class="anchored" data-anchor-id="workflowset">Workflowset</h2>
+<p>Erstellung des WFsets, für die mehreren Modelle.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>preproc <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">Rec1 =</span> Rec1)</span>
 <span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>models <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">NavB =</span> NaiveBayes, <span class="at">XgB =</span> XgBoost)</span>
@@ -677,7 +566,7 @@ Das folgende Objekt ist maskiert 'package:dials':
 <pre><code>i 1 of 2 resampling: Rec1_NavB</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code>✔ 1 of 2 resampling: Rec1_NavB (12.9s)</code></pre>
+<pre><code>✔ 1 of 2 resampling: Rec1_NavB (12.6s)</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>i 2 of 2 tuning:     Rec1_XgB</code></pre>
@@ -686,7 +575,7 @@ Das folgende Objekt ist maskiert 'package:dials':
 <pre><code>i Creating pre-processing data to finalize unknown parameter: mtry</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code>✔ 2 of 2 tuning:     Rec1_XgB (6m 0.1s)</code></pre>
+<pre><code>✔ 2 of 2 tuning:     Rec1_XgB (5m 51.3s)</code></pre>
 </div>
 </div>
 </section>
@@ -765,7 +654,7 @@ Das folgende Objekt ist maskiert 'package:dials':
 <span id="cb58-8"><a href="#cb58-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb58-9"><a href="#cb58-9" aria-hidden="true" tabindex="-1"></a>fit_final <span class="ot">&lt;-</span> <span class="fu">fit</span>(best_wf_finalized, <span class="at">data =</span> Hate_train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[19:26:28] WARNING: src/learner.cc:767: 
+<pre><code>[20:17:27] WARNING: src/learner.cc:767: 
 Parameters: { "nthreads" } are not used.</code></pre>
 </div>
 </div>
@@ -789,6 +678,7 @@ Parameters: { "nthreads" } are not used.</code></pre>
 </div>
 </div>
 </div>
+<p>Die Fläche unterhalb der Kurve ist durchaus beachtlich und unterstützt die These, dass das Modell gut abschneidet.</p>
 </section>
 <section id="varibale-importance" class="level2">
 <h2 class="anchored" data-anchor-id="varibale-importance">Varibale Importance</h2>
@@ -886,6 +776,7 @@ Parameters: { "nthreads" } are not used.</code></pre>
 <span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> classifier(tweets)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Speicherung der Ergebnisse</p>
+<p>hierfür nehme ich die Python Prediction und füge sie mit dem test Datensatz zusammen, um diese dann mit den originalen Werten zu vergleichen.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a>labels <span class="ot">&lt;-</span> <span class="fu">lapply</span>(py<span class="sc">$</span>results, <span class="cf">function</span>(element) {</span>
 <span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (element<span class="sc">$</span>label <span class="sc">==</span> <span class="st">"hate"</span>) {</span>
@@ -907,7 +798,7 @@ Parameters: { "nthreads" } are not used.</code></pre>
 <span id="cb71-18"><a href="#cb71-18" aria-hidden="true" tabindex="-1"></a>HT3<span class="sc">$</span>class <span class="ot">&lt;-</span> <span class="fu">factor</span>(HT3<span class="sc">$</span>class, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"hate speech"</span>, <span class="st">"other"</span>))</span>
 <span id="cb71-19"><a href="#cb71-19" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb71-20"><a href="#cb71-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb71-21"><a href="#cb71-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Factorisierung</span></span>
+<span id="cb71-21"><a href="#cb71-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Faktorisierung</span></span>
 <span id="cb71-22"><a href="#cb71-22" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb71-23"><a href="#cb71-23" aria-hidden="true" tabindex="-1"></a>HT3 <span class="ot">&lt;-</span> HT3 <span class="sc">%&gt;%</span> </span>
 <span id="cb71-24"><a href="#cb71-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">class =</span> <span class="fu">as.factor</span>(class)) <span class="sc">%&gt;%</span> </span>
@@ -929,7 +820,7 @@ Parameters: { "nthreads" } are not used.</code></pre>
 2 f_meas   binary         0.788</code></pre>
 </div>
 </div>
-<p>Zusammenfassend kann man also sagen, dass das XgBoost Modell auf diesen Daten immer noch besser performt, als das Roberta Modell. Beide performen jedoch sehr gut und haben ihre eigenen Vorteile. Das Roberta Modell läuft bei mir z.B. weitaus schneller durch.</p>
+<p>Zusammenfassend kann man also sagen, dass das XgBoost Modell auf diesen Daten immer noch besser performt, als das Roberta Modell. Beide performen jedoch sehr gut und haben ihre eigenen Vorteile. Das Roberta Modell läuft bei mir z.B. weitaus schneller durch. Auch das Naive Bayes Modell passt solide zu dem Datensatz, performt aber allgemein schlechter. Die Aufarbeitung der Daten im ersten Schritt (entfernung der https etc) und die tfidf Implementierung haben hier bei der Analyse den größten Unterschied gemacht und für gute Ergebnisse gesorgt.</p>
 
 
 </section>

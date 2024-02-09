@@ -188,6 +188,8 @@ d_hatetoken_SA %>%
 
 ## Recipe Erstellung
 
+Im ersten Schritt erstelle ich mein Recept für die Modelle. Hierbei nutze ich  step_stopwords, um Stopwörter zu entfernen, step_stem, um Wortstämme zu analysieren, step_tfidf zur tfidf implementierung und   step_text_normalization zur weiteren Textbereinigung.
+
 ```{r}
 Rec1 <- 
   recipe(class ~ ., data = Hate_train) %>%
@@ -213,7 +215,7 @@ d_rec1 <- bake(rec1_prepped, new_data = NULL)
 head(d_rec1)
 ```
 
-Entschieden habe ich mich für ein NaiveBayes und ein XgBoost Modell. 
+Entschieden habe ich mich für ein NaiveBayes und ein XgBoost Modell. Beide definiere ich hier. Beim XgBoost Modell tune ich Parameter im folgenden. Trees habe ich auf 1000 gesetzt, um overfitting zu verhindern.  
 
 ```{r}
 
@@ -234,6 +236,8 @@ XgBoost <-
 ```
 
 ## Workflowset
+
+Erstellung des WFsets, für die mehreren Modelle.
 
 ```{r}
 preproc <- list(Rec1 = Rec1)
@@ -327,7 +331,7 @@ wf_preds %>%
 
 ```
 
-
+Die Fläche unterhalb der Kurve ist durchaus beachtlich und unterstützt die These, dass das Modell gut abschneidet.
 
 ## Varibale Importance 
 
@@ -432,6 +436,7 @@ results = classifier(tweets)
 
 Speicherung der Ergebnisse 
 
+hierfür nehme ich die Python Prediction und füge sie mit dem test Datensatz zusammen, um diese dann mit den originalen Werten zu vergleichen.
 ```{r}
 
 
@@ -455,7 +460,7 @@ HT3$pred <- factor(HT3$pred, levels = c("hate speech", "other"))
 HT3$class <- factor(HT3$class, levels = c("hate speech", "other"))
 
 
-# Factorisierung
+# Faktorisierung
 
 HT3 <- HT3 %>% 
   mutate(class = as.factor(class)) %>% 
@@ -473,4 +478,6 @@ my_metrics2(HT3,
            truth = class,
            estimate = pred)
 ```
-Zusammenfassend kann man also sagen, dass das XgBoost Modell auf diesen Daten immer noch besser performt, als das Roberta Modell. Beide performen jedoch sehr gut und haben ihre eigenen Vorteile. Das Roberta Modell läuft bei mir z.B. weitaus schneller durch.
+
+
+Zusammenfassend kann man also sagen, dass das XgBoost Modell auf diesen Daten immer noch besser performt, als das Roberta Modell. Beide performen jedoch sehr gut und haben ihre eigenen Vorteile. Das Roberta Modell läuft bei mir z.B. weitaus schneller durch. Auch das Naive Bayes Modell passt solide zu dem Datensatz, performt aber allgemein schlechter. Die Aufarbeitung der Daten im ersten Schritt (entfernung der https etc) und die tfidf Implementierung haben hier bei der Analyse den größten Unterschied gemacht und für gute Ergebnisse gesorgt.
